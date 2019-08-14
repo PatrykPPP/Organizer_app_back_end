@@ -3,13 +3,13 @@ package com.organizer.organizerapp.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.organizer.organizerapp.dao.TaskDAO;
+import com.organizer.organizerapp.dao.TaskRepository;
 import com.organizer.organizerapp.dao.WeatherDAO;
 import com.organizer.organizerapp.entity.Task;
 import com.organizer.organizerapp.entity.Weather;
@@ -18,46 +18,51 @@ import com.organizer.organizerapp.entity.Weather;
 public class TaskServiceImpl implements TaskService {
 	
 	@Autowired
-	@Qualifier("taskDAOHibernateImpl")
-	private TaskDAO taskDAO;
+	private TaskRepository taskRepository;
 	
 	@Autowired
 	@Qualifier("weatherDAOImpl")
 	private WeatherDAO weatherDAO;
 
 	@Override
-	@Transactional
 	public List<Task> getAll() {
 
-		return taskDAO.getAll();
+		return taskRepository.findAll();
 	}
 
 	@Override
-	@Transactional
 	public Task getById(int id) {
 
-		return taskDAO.getById(id);
+		Optional<Task> result = taskRepository.findById(id);
+		
+		Task task = null;
+		
+		if(result.isPresent()) {
+			task = result.get();
+		}
+		else {
+			throw new RuntimeException("Did not find task.");
+		}
+		
+		return task;
 	}
 
 	@Override
-	@Transactional
 	public void save(Task task) {
 		
-		taskDAO.save(task);
+		taskRepository.save(task);
 	}
 
 	@Override
-	@Transactional
 	public void deleteById(int id) {
 
-		taskDAO.deleteById(id);
+		taskRepository.deleteById(id);
 	}
-
+/*
 	@Override
-	@Transactional
 	public List<Task> getByCompleted(boolean isCompleted) {
 		
-		List<Task> tasks = taskDAO.getByCompleted(isCompleted);
+		List<Task> tasks = taskRepository.getByCompleted(isCompleted);
 		
 		for(Task task: tasks) {
 			
@@ -72,10 +77,22 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	@Transactional
 	public void merge(Map<String, Object> update , int taskId) {
 		
-		taskDAO.merge(update, taskId);
+		taskRepository.merge(update, taskId);
+		
+	}
+	*/
+
+	@Override
+	public List<Task> getByCompleted(boolean isCompleted) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void merge(Map<String, Object> update, int taskId) {
+		// TODO Auto-generated method stub
 		
 	} 
 }
