@@ -17,9 +17,13 @@ public class WeatherDAOImpl implements WeatherDAO {
 	@Override
 	public Weather getByDateAndTime(LocalDateTime localDateTime) {
 
-		List<WeatherInfoForHour> weatherInfoForHours = getWeatherInfoForHours();
+		List<WeatherInfoForHour> weatherInfoForHours = this.getWeatherInfoForHours();
 
 		Weather weather = this.getApproximatedWeather(weatherInfoForHours, localDateTime);
+		
+		String weatherIcon = "http://openweathermap.org/img/wn/"  + weather.getWeatherIcon() + "@2x.png";
+		
+		weather.setWeatherIcon(weatherIcon);
 
 		return weather;
 	}

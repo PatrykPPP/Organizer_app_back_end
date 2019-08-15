@@ -21,7 +21,7 @@ import com.organizer.organizerapp.service.TaskService;
 @RequestMapping("/api")
 public class TaskRestController {
 	
-	/*
+	
 	@Autowired
 	private TaskService taskService;
 	
@@ -29,7 +29,7 @@ public class TaskRestController {
 	public List<Task> getAllTask(){
 		return taskService.getAll();
 	}
-	
+
 	@GetMapping("tasks/{taskId}")
 	public Task getTask(@PathVariable int taskId) {
 		
@@ -83,6 +83,6 @@ public class TaskRestController {
 		
 		return taskId;
 	}
-	*/
+
 	
 }

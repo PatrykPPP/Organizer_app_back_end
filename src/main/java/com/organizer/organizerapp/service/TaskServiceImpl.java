@@ -27,7 +27,11 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public List<Task> getAll() {
 
-		return taskRepository.findAll();
+		List <Task> tasks = taskRepository.findAll();
+				
+		this.setWeatherInTasks(tasks);
+		
+		return tasks;
 	}
 
 	@Override
@@ -44,6 +48,8 @@ public class TaskServiceImpl implements TaskService {
 			throw new RuntimeException("Did not find task.");
 		}
 		
+		this.setWeatherInTask(task);
+		
 		return task;
 	}
 
@@ -58,41 +64,40 @@ public class TaskServiceImpl implements TaskService {
 
 		taskRepository.deleteById(id);
 	}
-/*
+
 	@Override
 	public List<Task> getByCompleted(boolean isCompleted) {
 		
-		List<Task> tasks = taskRepository.getByCompleted(isCompleted);
+		List<Task> tasks = taskRepository.findByIsCompleted(isCompleted);
 		
-		for(Task task: tasks) {
-			
-			LocalDateTime taskDateTime = task.getLocalDateTime();
-			
-			Weather weather = weatherDAO.getByDateAndTime(taskDateTime);
-			
-			task.setWeather(weather);
-		}
+		this.setWeatherInTasks(tasks);
 		
 		return tasks;
 	}
-
+	
 	@Override
 	public void merge(Map<String, Object> update , int taskId) {
 		
 		taskRepository.merge(update, taskId);
 		
 	}
-	*/
-
-	@Override
-	public List<Task> getByCompleted(boolean isCompleted) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	
+	private void setWeatherInTasks(List<Task> tasks) {
+		
+		for(Task task: tasks) {
+			
+			this.setWeatherInTask(task);
+		}
+	}
+	
+	private void setWeatherInTask(Task task) {
+		
+		LocalDateTime taskDateTime = task.getLocalDateTime();
+		
+		Weather weather = weatherDAO.getByDateAndTime(taskDateTime);
+		
+		task.setWeather(weather);
 	}
 
-	@Override
-	public void merge(Map<String, Object> update, int taskId) {
-		// TODO Auto-generated method stub
-		
-	} 
 }
