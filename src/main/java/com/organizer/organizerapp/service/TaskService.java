@@ -3,15 +3,17 @@ package com.organizer.organizerapp.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
+
 import com.organizer.organizerapp.entity.Task;
 
 public interface TaskService {
 
-	public List<Task> getAll();
+	public List<Task> findAll(Pageable pageable);
 	
-	public Task getById(int id);
+	public Task findById(int id);
 	
-	public List<Task> getByCompleted(boolean isCompleted);
+	public List<Task> findByCompleted(boolean isCompleted);
 	
 	public void save(Task task);
 	

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,16 +27,15 @@ public class TaskRestController {
 	private TaskService taskService;
 	
 	@GetMapping("/tasks")
-	public List<Task> getAllTask(){
-		return taskService.getAll();
+	public List<Task> getAllTask(Pageable pageable){
+		
+		return taskService.findAll(pageable);
 	}
 
 	@GetMapping("tasks/{taskId}")
 	public Task getTask(@PathVariable int taskId) {
 		
-		Task task = taskService.getById(taskId);
-		
-		
+		Task task = taskService.findById(taskId);
 		
 		if (task == null) {
 			throw new RuntimeException("Task is not found - " + taskId);
@@ -67,7 +67,7 @@ public class TaskRestController {
 		
 		taskService.merge(update, taskId);
 		
-		Task task = taskService.getById(taskId);
+		Task task = taskService.findById(taskId);
 		
 		return task;
 	}
@@ -75,7 +75,7 @@ public class TaskRestController {
 	@DeleteMapping("/tasks/{taskId}")
 	public int deleteTask(@PathVariable int taskId) {
 		
-		Task task = taskService.getById(taskId);
+		Task task = taskService.findById(taskId);
 		
 		if (task == null) {
 			throw new RuntimeException("Task is not found - " + taskId);

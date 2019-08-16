@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.organizer.organizerapp.dao.TaskRepository;
@@ -25,11 +27,11 @@ public class TaskServiceImpl implements TaskService {
 	private WeatherDAO weatherDAO;
 
 	@Override
-	public List<Task> getAll() {
+	public List<Task> findAll(Pageable pageable) {
 
-		List <Task> tasks = taskRepository.findAll();
+		Page<Task> pageTasks = taskRepository.findAll(pageable);
 		
-		
+		List<Task> tasks = pageTasks.getContent();
 				
 		this.setWeatherInTasks(tasks);
 		
@@ -37,7 +39,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public Task getById(int id) {
+	public Task findById(int id) {
 
 		Optional<Task> result = taskRepository.findById(id);
 		
@@ -68,7 +70,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<Task> getByCompleted(boolean isCompleted) {
+	public List<Task> findByCompleted(boolean isCompleted) {
 		
 		List<Task> tasks = taskRepository.findByIsCompleted(isCompleted);
 		
