@@ -28,6 +28,8 @@ public class TaskServiceImpl implements TaskService {
 	public List<Task> getAll() {
 
 		List <Task> tasks = taskRepository.findAll();
+		
+		
 				
 		this.setWeatherInTasks(tasks);
 		

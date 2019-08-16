@@ -35,6 +35,8 @@ public class TaskRestController {
 		
 		Task task = taskService.getById(taskId);
 		
+		
+		
 		if (task == null) {
 			throw new RuntimeException("Task is not found - " + taskId);
 		}
