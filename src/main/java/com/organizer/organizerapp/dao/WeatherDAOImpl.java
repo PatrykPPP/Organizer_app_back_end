@@ -32,6 +32,12 @@ public class WeatherDAOImpl implements WeatherDAO {
 
 		RestTemplate restTemplate = new RestTemplate();
 
+		try {
+			
+		} catch(Exception exc){
+			
+		}
+		
 		WeatherInfoFor5Days weatherInfoFor5Days = restTemplate.getForObject(
 				"http://api.openweathermap.org/data/2.5/forecast?q=warsaw,pl&appid=a783f1f518edaa5e1c966dcafce24183",
 				WeatherInfoFor5Days.class);
