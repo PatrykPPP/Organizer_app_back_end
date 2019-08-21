@@ -1,10 +1,14 @@
-package com.organizer.organizerapp.dao;
+package com.organizer.organizerapp.repository;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.organizer.organizerapp.entity.Weather;
@@ -12,31 +16,41 @@ import com.organizer.organizerapp.openweather.WeatherInfoFor5Days;
 import com.organizer.organizerapp.openweather.WeatherInfoForHour;
 
 @Repository
-public class WeatherDAOImpl implements WeatherDAO {
-
-	@Override
-	public Weather getByDateAndTime(LocalDateTime localDateTime) {
-
-		List<WeatherInfoForHour> weatherInfoForHours = this.getWeatherInfoForHours();
-
-		Weather weather = this.getApproximatedWeather(weatherInfoForHours, localDateTime);
-		
-		String weatherIcon = "http://openweathermap.org/img/wn/"  + weather.getWeatherIcon() + "@2x.png";
-		
-		weather.setWeatherIcon(weatherIcon);
-
-		return weather;
+public class WeatherRepositoryImpl implements WeatherRepository {
+	
+	private RestTemplate restTemplate;
+	
+	@Autowired
+	WeatherRepositoryImpl(RestTemplateBuilder builder){
+		this.restTemplate = builder.build();
 	}
 
-	private List<WeatherInfoForHour> getWeatherInfoForHours() {
-
-		RestTemplate restTemplate = new RestTemplate();
-
-		try {
-			
-		} catch(Exception exc){
-			
+	@Override
+	public Optional<Weather> getByDateAndTime(LocalDateTime localDateTime) {
+		
+		if (0 <= this.getTimeBetweenDatesInMinutes(localDateTime, LocalDateTime.now())) {
+			return Optional.empty();
 		}
+		else {
+			List<WeatherInfoForHour> weatherInfoForHours;
+			
+			try {
+				weatherInfoForHours = this.getWeatherInfoForHours();
+			} catch (RestClientException exc) {
+				return Optional.empty();
+			}
+
+			Weather weather = this.getApproximatedWeather(weatherInfoForHours, localDateTime);
+			
+			String weatherIcon = "http://openweathermap.org/img/wn/"  + weather.getWeatherIcon() + "@2x.png";
+			
+			weather.setWeatherIcon(weatherIcon);
+
+			return Optional.of(weather);
+		}
+	}
+
+	private List<WeatherInfoForHour> getWeatherInfoForHours() throws RestClientException {
 		
 		WeatherInfoFor5Days weatherInfoFor5Days = restTemplate.getForObject(
 				"http://api.openweathermap.org/data/2.5/forecast?q=warsaw,pl&appid=a783f1f518edaa5e1c966dcafce24183",

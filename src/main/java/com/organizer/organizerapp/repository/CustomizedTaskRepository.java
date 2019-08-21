@@ -1,4 +1,4 @@
-package com.organizer.organizerapp.dao;
+package com.organizer.organizerapp.repository;
 
 import java.util.Map;
 

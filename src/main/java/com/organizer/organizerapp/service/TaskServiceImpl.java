@@ -11,10 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.organizer.organizerapp.dao.TaskRepository;
-import com.organizer.organizerapp.dao.WeatherDAO;
 import com.organizer.organizerapp.entity.Task;
 import com.organizer.organizerapp.entity.Weather;
+import com.organizer.organizerapp.repository.TaskRepository;
+import com.organizer.organizerapp.repository.WeatherRepository;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -23,8 +23,8 @@ public class TaskServiceImpl implements TaskService {
 	private TaskRepository taskRepository;
 	
 	@Autowired
-	@Qualifier("weatherDAOImpl")
-	private WeatherDAO weatherDAO;
+	@Qualifier("weatherRepositoryImpl")
+	private WeatherRepository weatherDAO;
 
 	@Override
 	public List<Task> findAll(Pageable pageable) {
@@ -99,7 +99,15 @@ public class TaskServiceImpl implements TaskService {
 		
 		LocalDateTime taskDateTime = task.getLocalDateTime();
 		
-		Weather weather = weatherDAO.getByDateAndTime(taskDateTime);
+		Optional <Weather> result = weatherDAO.getByDateAndTime(taskDateTime);
+		
+		Weather weather;
+		
+		if (result.isPresent()) {
+			weather = result.get();
+		} else {
+			weather = null;
+		}
 		
 		task.setWeather(weather);
 	}
