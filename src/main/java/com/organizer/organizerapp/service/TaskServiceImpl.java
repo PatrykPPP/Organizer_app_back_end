@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.organizer.organizerapp.entity.Task;
 import com.organizer.organizerapp.entity.Weather;
+import com.organizer.organizerapp.exception.TaskNotFoundException;
 import com.organizer.organizerapp.repository.TaskRepository;
 import com.organizer.organizerapp.repository.WeatherRepository;
 
@@ -39,7 +40,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public Task findById(int id) {
+	public Task findById(int id) throws TaskNotFoundException {
 
 		Optional<Task> result = taskRepository.findById(id);
 		
@@ -49,7 +50,7 @@ public class TaskServiceImpl implements TaskService {
 			task = result.get();
 		}
 		else {
-			throw new RuntimeException("Did not find task.");
+			throw new TaskNotFoundException("Did not find task.");
 		}
 		
 		this.setWeatherInTask(task);
@@ -70,9 +71,13 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<Task> findByCompleted(boolean isCompleted) {
+	public List<Task> findByCompleted(boolean isCompleted) throws TaskNotFoundException {
 		
 		List<Task> tasks = taskRepository.findByIsCompleted(isCompleted);
+		
+		if (tasks.isEmpty()) {
+			throw new TaskNotFoundException("Did not find task.");
+		}
 		
 		this.setWeatherInTasks(tasks);
 		
