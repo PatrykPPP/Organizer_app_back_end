@@ -1,15 +1,12 @@
 package com.organizer.organizerapp.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -40,12 +37,6 @@ public class Task {
 	private LocalDateTime localDateTime;
 	
 	@Transient
-	private LocalDate localDate;
-	
-	@Transient
-	private LocalTime localTime;
-	
-	@Transient
 	@Autowired
 	private Weather weather;
 
@@ -58,7 +49,6 @@ public class Task {
 		this.isCompleted = isCompleted;
 		this.localDateTime = localDateTime;
 		this.weather = weather;
-		setDateAndTime();
 	}
 	
 	public int getId() {
@@ -99,23 +89,6 @@ public class Task {
 
 	public void setLocalDateTime(LocalDateTime localDateTime) {
 		this.localDateTime = localDateTime;
-		setDateAndTime();
-	}
-	
-	public LocalDate getLocalDate() {
-		return localDate;
-	}
-
-	public void setLocalDate(LocalDate localDate) {
-		this.localDate = localDate;
-	}
-
-	public LocalTime getLocalTime() {
-		return localTime;
-	}
-
-	public void setLocalTime(LocalTime localTime) {
-		this.localTime = localTime;
 	}
 
 	public Weather getWeather() {
@@ -126,16 +99,9 @@ public class Task {
 		this.weather = weather;
 	}
 
-	@PostLoad
-	private void setDateAndTime() {
-		this.localDate = localDateTime.toLocalDate();
-		this.localTime = localDateTime.toLocalTime();
-	}
-
 	@Override
 	public String toString() {
 		return "Task [id=" + id + ", title=" + title + ", description=" + description + ", isCompleted=" + isCompleted
-				+ ", localDateTime=" + localDateTime + ", localDate=" + localDate + ", localTime=" + localTime
-				+ ", weather=" + weather + "]";
+				+ ", localDateTime=" + localDateTime + ", weather=" + weather + "]";
 	}
 }

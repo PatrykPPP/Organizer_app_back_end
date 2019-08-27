@@ -31,13 +31,13 @@ public class TaskRestController {
 	private TaskService taskService;
 
 	@GetMapping("/tasks")
-	public List<Task> getAllTask(Pageable pageable) {
+	public List<Task> findAllTask(Pageable pageable) {
 
 		return taskService.findAll(pageable);
 	}
 
 	@GetMapping("tasks/{taskId}")
-	public Task getTask(@PathVariable int taskId) {
+	public Task findTask(@PathVariable int taskId) {
 
 		Task task;
 
