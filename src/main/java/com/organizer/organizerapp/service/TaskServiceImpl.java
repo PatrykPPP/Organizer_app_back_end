@@ -29,11 +29,15 @@ public class TaskServiceImpl implements TaskService {
 	private WeatherRepository weatherDAO;
 	
 	@Override
-	public List<Task> findAll(Specification<Task> specification, Pageable pageable) {
+	public List<Task> findAll(Specification<Task> specification, Pageable pageable) throws TaskNotFoundException {
 		
 		Page<Task> pageTasks = taskRepository.findAll(specification, pageable);
 		 
 		List<Task> tasks = pageTasks.getContent();
+		
+		if (tasks.isEmpty()) {
+			throw new TaskNotFoundException("Did not find task.");
+		}
 		
 		this.setWeatherInTasks(tasks);
 		

@@ -14,5 +14,14 @@ public class TaskSpecifications{
 			return cb.equal(root.get("isCompleted"), isCompleted);
 		};
 	}
+	
+	public static Specification<Task> likeTitle(String title){
+		return (root, query, cb) -> {
+			if (title == null) {
+				return cb.isTrue(cb.literal(true));
+			}
+			return cb.like(root.get("title"), "%" + title + "%");
+		};
+	}
 
 }
