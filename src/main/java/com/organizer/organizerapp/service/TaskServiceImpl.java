@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.organizer.organizerapp.entity.Task;
@@ -26,14 +27,14 @@ public class TaskServiceImpl implements TaskService {
 	@Autowired
 	@Qualifier("weatherRepositoryImpl")
 	private WeatherRepository weatherDAO;
-
+	
 	@Override
-	public List<Task> findAll(Pageable pageable) {
-
-		Page<Task> pageTasks = taskRepository.findAll(pageable);
+	public List<Task> findAll(Specification<Task> specification, Pageable pageable) {
 		
+		Page<Task> pageTasks = taskRepository.findAll(specification, pageable);
+		 
 		List<Task> tasks = pageTasks.getContent();
-				
+		
 		this.setWeatherInTasks(tasks);
 		
 		return tasks;
@@ -69,20 +70,6 @@ public class TaskServiceImpl implements TaskService {
 
 		taskRepository.deleteById(id);
 	}
-
-	@Override
-	public List<Task> findByCompleted(boolean isCompleted) throws TaskNotFoundException {
-		
-		List<Task> tasks = taskRepository.findByIsCompleted(isCompleted);
-		
-		if (tasks.isEmpty()) {
-			throw new TaskNotFoundException("Did not find task.");
-		}
-		
-		this.setWeatherInTasks(tasks);
-		
-		return tasks;
-	}
 	
 	@Override
 	public void merge(Map<String, Object> update , int taskId) {
@@ -116,5 +103,4 @@ public class TaskServiceImpl implements TaskService {
 		
 		task.setWeather(weather);
 	}
-
 }

@@ -4,16 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.organizer.organizerapp.entity.Task;
 
 public interface TaskService {
-
-	public List<Task> findAll(Pageable pageable);
+	
+	public List<Task> findAll(Specification<Task> specification, Pageable pageable);
 	
 	public Task findById(int id);
-	
-	public List<Task> findByCompleted(boolean isCompleted);
 	
 	public void save(Task task);
 	

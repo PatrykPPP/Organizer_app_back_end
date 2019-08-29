@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,12 +17,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.organizer.organizerapp.entity.Task;
 import com.organizer.organizerapp.exception.TaskNotFoundException;
+import com.organizer.organizerapp.repository.TaskRepository;
 import com.organizer.organizerapp.service.TaskService;
+import com.organizer.organizerapp.specification.TaskSpecifications;
 
 @RestController
 @RequestMapping("/api")
@@ -31,9 +36,12 @@ public class TaskRestController {
 	private TaskService taskService;
 
 	@GetMapping("/tasks")
-	public List<Task> findAllTask(Pageable pageable) {
-
-		return taskService.findAll(pageable);
+	public List<Task> findAllTasks(@RequestParam(required=false) Boolean isCompleted,
+									Pageable pageable) {
+		
+		Specification<Task> spec = Specification.where(TaskSpecifications.isCompleted(isCompleted));
+		
+		return taskService.findAll(spec, pageable);
 	}
 
 	@GetMapping("tasks/{taskId}")
