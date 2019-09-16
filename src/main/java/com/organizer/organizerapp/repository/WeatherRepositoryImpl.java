@@ -17,41 +17,51 @@ import com.organizer.organizerapp.openweather.WeatherInfoForHour;
 
 @Repository
 public class WeatherRepositoryImpl implements WeatherRepository {
-	
+
 	private RestTemplate restTemplate;
-	
+
 	@Autowired
-	WeatherRepositoryImpl(RestTemplateBuilder builder){
+	WeatherRepositoryImpl(RestTemplateBuilder builder) {
 		this.restTemplate = builder.build();
 	}
 
 	@Override
 	public Optional<Weather> getByDateAndTime(LocalDateTime localDateTime) {
-		
-		if (0 <= this.getTimeBetweenDatesInMinutes(localDateTime, LocalDateTime.now())) {
+
+		final int FIVE_DAYS_IN_MINUTES = 7200;
+
+		if (localDateTime == null) {
 			return Optional.empty();
 		}
-		else {
-			List<WeatherInfoForHour> weatherInfoForHours;
-			
-			try {
-				weatherInfoForHours = this.getWeatherInfoForHours();
-			} catch (RestClientException exc) {
-				return Optional.empty();
-			}
 
-			Weather weather = this.getApproximatedWeather(weatherInfoForHours, localDateTime);
-			
-			String weatherIcon = "http://openweathermap.org/img/wn/"  + weather.getWeatherIcon() + "@2x.png";
-			
-			weather.setWeatherIcon(weatherIcon);
-
-			return Optional.of(weather);
+		if (0 >= this.getTimeBetweenDatesInMinutes(localDateTime, LocalDateTime.now())
+				|| FIVE_DAYS_IN_MINUTES <= this.getTimeBetweenDatesInMinutes(localDateTime, LocalDateTime.now())) {
+			return Optional.empty();
 		}
+
+		List<WeatherInfoForHour> weatherInfoForHours;
+
+		try {
+
+			weatherInfoForHours = this.getWeatherInfoForHours();
+
+		} catch (RestClientException exc) {
+
+			return Optional.empty();
+		}
+
+		Weather weather = this.getApproximatedWeather(weatherInfoForHours, localDateTime);
+
+		String weatherIcon = "http://openweathermap.org/img/wn/" + weather.getWeatherIcon() + "@2x.png";
+
+		weather.setWeatherIcon(weatherIcon);
+
+		return Optional.of(weather);
+
 	}
 
 	private List<WeatherInfoForHour> getWeatherInfoForHours() throws RestClientException {
-		
+
 		WeatherInfoFor5Days weatherInfoFor5Days = restTemplate.getForObject(
 				"http://api.openweathermap.org/data/2.5/forecast?q=warsaw,pl&appid=a783f1f518edaa5e1c966dcafce24183",
 				WeatherInfoFor5Days.class);
@@ -70,9 +80,9 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
 	private double getTimeBetweenDatesInMinutes(LocalDateTime localDateTime1, LocalDateTime localDateTime2) {
 
-		double absTimeBetweenInMinutes = localDateTime1.until(localDateTime2, ChronoUnit.MINUTES);
+		double TimeBetweenInMinutes = localDateTime2.until(localDateTime1, ChronoUnit.MINUTES);
 
-		return absTimeBetweenInMinutes;
+		return TimeBetweenInMinutes;
 	}
 
 	private Weather getApproximatedWeather(List<WeatherInfoForHour> weatherInfoForHours, LocalDateTime localDateTime) {
@@ -81,8 +91,9 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
 		for (WeatherInfoForHour weatherInfoForHour : weatherInfoForHours) {
 
-			if (getAbsTimeBetweenDatesInMinutes(localDateTime, weatherInfoForHour1.getLocalDateTime()) 
-					> getAbsTimeBetweenDatesInMinutes(localDateTime, weatherInfoForHour.getLocalDateTime())) {
+			if (getAbsTimeBetweenDatesInMinutes(localDateTime,
+					weatherInfoForHour1.getLocalDateTime()) > getAbsTimeBetweenDatesInMinutes(localDateTime,
+							weatherInfoForHour.getLocalDateTime())) {
 
 				weatherInfoForHour1 = weatherInfoForHour;
 
@@ -93,15 +104,20 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 		WeatherInfoForHour weatherInfoForHour2;
 
 		if (weatherInfoForHours.get(0) == weatherInfoForHour1) {
+			
 			weatherInfoForHour2 = weatherInfoForHours.get(1);
+			
 		} else {
+			
 			weatherInfoForHour2 = weatherInfoForHours.get(0);
+			
 		}
-
+		
 		for (WeatherInfoForHour weatherInfoForHour : weatherInfoForHours) {
 
-			if (getAbsTimeBetweenDatesInMinutes(localDateTime, weatherInfoForHour2.getLocalDateTime()) 
-					> getAbsTimeBetweenDatesInMinutes(localDateTime, weatherInfoForHour.getLocalDateTime())) {
+			if (getAbsTimeBetweenDatesInMinutes(localDateTime,
+					weatherInfoForHour2.getLocalDateTime()) > getAbsTimeBetweenDatesInMinutes(localDateTime,
+							weatherInfoForHour.getLocalDateTime())) {
 
 				if (weatherInfoForHour != weatherInfoForHour1) {
 					weatherInfoForHour2 = weatherInfoForHour;
@@ -131,14 +147,17 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
 		if (getAbsTimeBetweenDatesInMinutes(localDateTime,
 				localDateTime1) > getAbsTimeBetweenDatesInMinutes(localDateTime, localDateTime2)) {
+			
 			weather.setWeatherIcon(weatherInfoForHour2.getWeatherIcon());
+			
 		} else {
+			
 			weather.setWeatherIcon(weatherInfoForHour1.getWeatherIcon());
+			
 		}
-		
+
 		return weather;
-		
+
 	}
-	
 
 }
