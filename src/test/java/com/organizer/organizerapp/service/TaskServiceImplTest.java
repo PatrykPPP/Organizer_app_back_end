@@ -73,6 +73,7 @@ public class TaskServiceImplTest {
 	public void whenFindById0_thenReturnTask() {
 
 		Task taskTest = taskService.findById(0);
+		
 		assertThat(taskTest).isEqualTo(task);
 	}
 	
