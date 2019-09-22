@@ -26,7 +26,7 @@ public class TaskServiceImpl implements TaskService {
 	
 	@Autowired
 	@Qualifier("weatherRepositoryImpl")
-	private WeatherRepository weatherDAO;
+	private WeatherRepository weatherRepository;
 	
 	@Override
 	public List<Task> findAll(Specification<Task> specification, Pageable pageable) throws TaskNotFoundException {
@@ -95,7 +95,7 @@ public class TaskServiceImpl implements TaskService {
 		
 		LocalDateTime taskDateTime = task.getLocalDateTime();
 		
-		Optional <Weather> result = weatherDAO.getByDateAndTime(taskDateTime);
+		Optional <Weather> result = weatherRepository.getByDateAndTime(taskDateTime);
 		
 		Weather weather;
 		
