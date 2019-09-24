@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.organizer.organizerapp.entity.Task;
 import com.organizer.organizerapp.exception.TaskNotFoundException;
 import com.organizer.organizerapp.service.TaskService;
+import com.organizer.organizerapp.service.UserAuthenticationService;
 import com.organizer.organizerapp.specification.TaskSpecifications;
 
 @RestController
@@ -32,10 +35,17 @@ public class TaskRestController {
 
 	@Autowired
 	private TaskService taskService;
+	
+	@Autowired
+	private UserAuthenticationService userAuthenticationService;
 
 	@GetMapping("/tasks")
 	public List<Task> findAllTasks(@RequestParam(required = false) Boolean isCompleted,
 			@RequestParam(required = false) String title, Pageable pageable) { 
+		
+		Authentication authentication = userAuthenticationService.getAuthentication();
+		
+		System.out.println(authentication.getName());
 
 		Specification<Task> spec = Specification
 				.where(TaskSpecifications.isCompleted(isCompleted).and(TaskSpecifications.likeTitle(title)));
