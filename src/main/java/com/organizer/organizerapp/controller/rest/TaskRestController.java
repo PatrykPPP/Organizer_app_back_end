@@ -34,17 +34,10 @@ public class TaskRestController {
 
 	@Autowired
 	private TaskService taskService;
-	
-	@Autowired
-	private UserAuthenticationService userAuthenticationService;
 
 	@GetMapping("/tasks")
 	public List<Task> findAllTasks(@RequestParam(required = false) Boolean isCompleted,
 			@RequestParam(required = false) String title, Pageable pageable) { 
-		
-		Authentication authentication = userAuthenticationService.getAuthentication();
-		
-		System.out.println(authentication.getName());
 
 		Specification<Task> spec = Specification
 				.where(TaskSpecifications.isCompleted(isCompleted).and(TaskSpecifications.likeTitle(title)));

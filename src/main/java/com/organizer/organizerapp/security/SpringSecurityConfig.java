@@ -30,11 +30,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.httpBasic();
 	}
-	
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		
 		auth.jdbcAuthentication().dataSource(dataSource);
 	}
-	
 }
