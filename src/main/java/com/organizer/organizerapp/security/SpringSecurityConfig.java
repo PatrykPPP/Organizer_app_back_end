@@ -1,9 +1,5 @@
 package com.organizer.organizerapp.security;
 
-
-
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +18,6 @@ import com.organizer.organizerapp.service.UserService;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
-	DataSource dataSource;
-	
-	@Autowired
 	UserService userService;
 
 	@Override
@@ -39,10 +32,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.httpBasic();
 	}
 	
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		
-		auth.jdbcAuthentication().dataSource(dataSource);
+		auth.authenticationProvider(authenticationProvider());
 	}
 	
 	
@@ -50,7 +43,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	/*
+	
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
@@ -58,5 +51,5 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.setPasswordEncoder(passwordEncoder());
 		return auth;
 	}
-	*/
+	
 }
