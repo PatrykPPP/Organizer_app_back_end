@@ -18,38 +18,39 @@ import com.organizer.organizerapp.service.UserService;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
-	UserService userService;
-
+    private UserService userService;
+    /*
+   @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
+    */
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http
-			.csrf().disable()
-			.authorizeRequests()
-				.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-				.anyRequest().authenticated()
-				.and()
-				.httpBasic();
+		.httpBasic()
+		.and()
+		.authorizeRequests()
+			.antMatchers(HttpMethod.POST, "/**").permitAll()
+			.antMatchers(HttpMethod.GET, "/**").permitAll();
+			
+		http.csrf().disable();
 	}
-	
-	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(authenticationProvider());
-	}
-	
 	
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+	/*
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-		auth.setUserDetailsService(userService);
-		auth.setPasswordEncoder(passwordEncoder());
+		auth.setUserDetailsService(userService); //set the custom user details service
+		auth.setPasswordEncoder(passwordEncoder()); //set the password encoder - bcrypt
 		return auth;
 	}
+	*/
 	
 }
