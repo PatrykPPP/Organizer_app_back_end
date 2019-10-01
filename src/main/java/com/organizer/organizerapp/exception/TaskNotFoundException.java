@@ -17,7 +17,4 @@ public class TaskNotFoundException extends RuntimeException {
 	public TaskNotFoundException(Throwable cause) {
 		super(cause);
 	}
-
-	
-
 }
