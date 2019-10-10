@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.organizer.organizerapp.repository.UserRepository;
+import com.organizer.organizerapp.service.UserService;
 
 @RestController
 @RequestMapping("/api")
@@ -15,11 +16,16 @@ public class RegistrationRestController {
 	
 	@Autowired 
 	UserRepository userRepository;
+	
+	@Autowired 
+	UserService userService;
 
 	@PostMapping("/registration")
 	public void register() {
 		
 		System.out.println(userRepository.findByUsername("Peter"));
+		
+		System.out.println(userService.loadUserByUsername("Peter").getUsername());
 		
 	}
 	
